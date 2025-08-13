@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pictorial Translator</title>
+
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="translator-container">
+        <!-- Main heading of the application -->
+        <h1>Universal Translator</h1>
+
+        <!-- Section for selecting languages -->
+        <div class="section">
+            <h2>Select Languages</h2>
+            <label for="fromLanguage">From:</label>
+            <select id="fromLanguage">
+                <option value="auto">Auto</option>  <!-- Auto-detection option -->
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <!-- Add more languages as needed -->
+            </select>
+            <label for="toLanguage">To:</label>
+            <select id="toLanguage">
+                <option value="en">English</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+                <option value="ja">Japanese</option>
+                <!-- Add more languages as needed -->
+            </select>
+        </div>
+
+        <!-- Section for uploading an image -->
+        <div class="section">
+            <h2>Upload Image</h2>
+            <form id="uploadForm" enctype="multipart/form-data" method="POST">
+                <input type="file" id="file" name="file" accept="image/*">
+                <button type="submit" id="uploadButton" class="upload-button-disabled" disabled>Upload</button>
+            </form>
+        </div>
+
+        <!-- Progress bar (hidden by default) -->
+        <div id="progressContainer" class="progress-container" style="display: none;">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <!-- Add this line before the translation section -->
+        <p id="uploadSuccessMessage" style="color: green;"></p>
+
+        <!-- Section to display the result after the image is uploaded and processed -->
+        <div class="section">
+            <h2>Translation Text</h2>
+            <div id="translationResult" class="loading">
+                Transcription: <span id="detectedText"></span><br>
+                Translation: <span id="translatedText"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link to external JavaScript file for handling the file upload and interaction with the backend -->
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pictorial Translator</title>
+</head>
+<body>
+    <h1>Pictorial Translator</h1>
+    <form id="uploadForm" enctype="multipart/form-data" method="POST">
+        <label for="file">Choose an image:</label>
+        <input type="file" id="file" name="file" accept="image/*">
+        <button type="submit">Upload</button>
+    </form>
+
+    <div id="result">
+        <h2>Detected Text and Translation:</h2>
+        <pre id="translationResult"></pre>
+    </div>
+
+    <!-- Script to handle pre-signed URL generation and direct S3 upload -->
+    <script>
+        const form = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('file');
+        const translationResult = document.getElementById('translationResult');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();  // Prevent the page from reloading
+
+            const file = fileInput.files[0];
+            if (!file) {
+                translationResult.innerText = 'Please select a file.';
+                return;
+            }
+
+            const fileName = file.name;
+
+            try {
+                // Step 1: Get a pre-signed URL from the backend (Chalice API)
+                const presignedUrlResponse = await fetch('https://<API-GATEWAY-ID>.execute-api.<REGION>.amazonaws.com/api/generate-presigned-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileName })
+                });
+
+                const { presignedUrl } = await presignedUrlResponse.json();
+
+                // Step 2: Upload the file directly to S3 using the pre-signed URL
+                const uploadResponse = await fetch(presignedUrl, {
+                    method: 'PUT',
+                    body: file
+                });
+
+                if (uploadResponse.ok) {
+                    translationResult.innerText = 'File uploaded successfully!';
+
+                    // Here you can add additional logic to trigger text detection and translation
+                    // Example: Call an endpoint to start processing the image in S3
+                } else {
+                    translationResult.innerText = 'Error uploading file to S3.';
+                    console.error('Upload failed:', uploadResponse.statusText);
+                }
+            } catch (error) {
+                translationResult.innerText = 'Error during the upload process.';
+                console.error('Upload error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
